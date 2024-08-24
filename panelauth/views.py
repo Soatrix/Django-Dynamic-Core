@@ -26,9 +26,6 @@ class AuthLoginView(LoggedOutRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["PAGE_TITLE"] = 'Login'
-        context["PROJECT_NAME"] = settings.NAME
-        context["PROJECT_VERSION"] = settings.VERSION
-        context["THEME"] = Theme.objects.filter(default=True)[0]
         return context
 
 class AuthRegisterView(LoggedOutRequiredMixin, TemplateView):
@@ -37,7 +34,4 @@ class AuthRegisterView(LoggedOutRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["PAGE_TITLE"] = 'Registration'
-        context["PROJECT_NAME"] = settings.NAME
-        context["PROJECT_VERSION"] = settings.VERSION
-        context["THEME"] = Theme.objects.filter(default=True)[0]
         return context
