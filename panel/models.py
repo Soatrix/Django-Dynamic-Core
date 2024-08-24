@@ -12,7 +12,7 @@ class UserProfile(models.Model):
         return self.user.username
 
 class Theme(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     light_css = models.TextField(blank=True)
     dark_css = models.TextField(blank=True)
     default = models.BooleanField(default=False)
