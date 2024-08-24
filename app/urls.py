@@ -27,9 +27,10 @@ urlpatterns = [
 for app_config in apps.get_app_configs():
     try:
         # Try to import the app's urls module
-        module = import_module(f'{app_config.name}.urls')
-        # If the import succeeds, include the URLs
-        urlpatterns.append(path(f'', include(f'{app_config.name}.urls')))
+        if app_config.name != ("django.contrib.auth"):
+            module = import_module(f'{app_config.name}.urls')
+            # If the import succeeds, include the URLs
+            urlpatterns.append(path(f'', include(f'{app_config.name}.urls')))
     except ModuleNotFoundError:
         # If there's no urls module, skip to the next app
         pass
