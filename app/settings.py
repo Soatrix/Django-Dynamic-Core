@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import importlib
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -138,6 +139,18 @@ LOGIN_REDIRECT_URL = '/'
 # Project Specific Settings
 NAME = "Dynamic Django"
 VERSION = "0.1-DEV"
+
+# Dynamic Menu Settings
+ADMIN_MENU = []
+FRONT_MENU = []
+for app in INSTALLED_APPS:
+    menulibrary = f"{app}.menus"
+    if importlib.util.find_spec(menulibrary) is not None:
+        app = importlib.import_module(menulibrary)
+        if hasattr(app, 'ADMIN_MENU'):
+            ADMIN_MENU.extend(app.ADMIN_MENU)
+        if hasattr(app, 'FRONT_MENU'):
+            FRONT_MENU.extend(app.FRONT_MENU)
 
 # Messages Settings
 INVALID_LOGIN_MESSAGE = "Invalid Login Credentials. Please check your input and try again."
