@@ -8,6 +8,11 @@ ADMIN_MENU = [
                 "link": "admin-users"
             },
             {
+                "icon": "user-group",
+                "label": "Groups",
+                "link": "admin-groups",
+            },
+            {
                 "icon": "palette",
                 "label": "Themes",
                 "link": "admin-themes"

@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView, View
 from django.shortcuts import get_object_or_404, redirect
 from panel.models import Theme
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 
@@ -103,3 +103,40 @@ class AdminUsersView(LoginRequiredMixin, TemplateView):
         context["PAGE_TITLE"] = "Manage Users"
         context["USERS"] = User.objects.all()
         return context
+
+class AdminGroupsView(LoginRequiredMixin, TemplateView):
+    template_name = "adminpanel/groups.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["PAGE_TITLE"] = "Manage Groups"
+        context["GROUPS"] = Group.objects.all()
+        return context
+
+class AdminGroupDetailView(LoginRequiredMixin, TemplateView):
+    template_name = "adminpanel/group-detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["GROUP"] = get_object_or_404(Group, id=self.kwargs["id"])
+        context["PERMISSIONS"] = Permission.objects.all()
+        context["PAGE_TITLE"] = "Edit Group #" + str(self.kwargs["id"])
+        return context
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+
+        saveRequired = False
+        print(request.POST)
+        for permission in context["PERMISSIONS"]:
+            if "permission-" + str(permission.id) in request.POST:
+                if permission not in context["GROUP"].permissions.all():
+                    context["GROUP"].permissions.add(permission)
+                    saveRequired = True
+            else:
+                if permission in context["GROUP"].permissions.all():
+                    context["GROUP"].permissions.remove(permission)
+                    saveRequired = True
+        if saveRequired:
+            context["GROUP"].save()
+            context["success"] = True
+        return self.render_to_response(context)
