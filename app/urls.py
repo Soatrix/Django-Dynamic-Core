@@ -15,8 +15,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.apps import apps
+from importlib import import_module
+from django.conf import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('djadmin/', admin.site.urls),
 ]
+
+for app_config in apps.get_app_configs():
+    try:
+        # Try to import the app's urls module
+        module = import_module(f'{app_config.name}.urls')
+        # If the import succeeds, include the URLs
+        urlpatterns.append(path(f'', include(f'{app_config.name}.urls')))
+    except ModuleNotFoundError:
+        # If there's no urls module, skip to the next app
+        pass
