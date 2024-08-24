@@ -1,14 +1,4 @@
 ADMIN_MENU = [
-    {
-        "name": "Panel Management",
-        "items": [
-            {
-                "icon": "palette",
-                "label": "Themes",
-                "link": "#"
-            }
-        ]
-    }
 ]
 FRONT_MENU = [
     {
