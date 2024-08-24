@@ -32,3 +32,8 @@ def site_theme(request):
     return {
         'THEME': theme
     }
+
+def site_user(request):
+    return {
+        "USER": request.user
+    }
