@@ -59,7 +59,7 @@ class AdminThemeDetailView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["THEME"] = get_object_or_404(Theme, id=self.kwargs["id"])
-        context["PAGE_TITLE"] = "Edit Theme"
+        context["PAGE_TITLE"] = "Edit Theme #" + str(self.kwargs["id"])
         return context
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
