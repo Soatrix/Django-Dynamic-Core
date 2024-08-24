@@ -140,6 +140,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = LOGOUT_REDIRECT_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 ADMIN_URL = "/admin/"
+ACCOUNT_URL = "/account/"
 
 # Project Specific Settings
 PROJECT_NAME = "Dynamic Django"
