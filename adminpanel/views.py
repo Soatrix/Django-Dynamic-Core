@@ -1,6 +1,7 @@
 from django.views.generic import TemplateView, View
 from django.shortcuts import get_object_or_404, redirect
 from panel.models import Theme
+from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 
@@ -93,3 +94,12 @@ class AdminThemeDetailView(LoginRequiredMixin, TemplateView):
             context["THEME"].delete()
             return redirect("admin-themes")
         return self.render_to_response(context)
+
+class AdminUsersView(LoginRequiredMixin, TemplateView):
+    template_name = "adminpanel/users.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["PAGE_TITLE"] = "Manage Users"
+        context["USERS"] = User.objects.all()
+        return context
