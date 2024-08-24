@@ -83,13 +83,15 @@
                 </div>
 
                 {% for item in menu.items %}
-                    {% url item.link as url%}
-                    <li class="nav-item {% if request.path == url %}active{% endif %}">
-                        <a class="nav-link" href="{{ url }}">
-                            <i class="fa-solid fa-{{ item.icon }}"></i>
-                            <span>{{ item.label }}</span>
-                        </a>
-                    </li>
+                    {% if item.link %}
+                        {% url item.link as url%}
+                        <li class="nav-item {% if request.path == url %}active{% endif %}">
+                            <a class="nav-link" href="{{ url }}">
+                                <i class="fa-solid fa-{{ item.icon }}"></i>
+                                <span>{{ item.label }}</span>
+                            </a>
+                        </li>
+                    {% endif %}
                 {% endfor %}
 
             {% endfor %}
