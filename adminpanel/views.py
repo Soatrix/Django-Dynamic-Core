@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView, View
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from panel.models import Theme
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
@@ -89,4 +89,7 @@ class AdminThemeDetailView(LoginRequiredMixin, TemplateView):
             if saveRequired:
                 context["THEME"].save()
                 context["success"] = True
+        elif "delete-theme" in request.POST:
+            context["THEME"].delete()
+            return redirect("admin-themes")
         return self.render_to_response(context)
