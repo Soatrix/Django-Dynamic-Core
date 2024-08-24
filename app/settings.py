@@ -133,10 +133,11 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Login URL Settings
+# URL Settings
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth
 LOGIN_URL = LOGOUT_REDIRECT_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
+ADMIN_URL = "/admin/"
 
 # Project Specific Settings
 PROJECT_NAME = "Dynamic Django"
