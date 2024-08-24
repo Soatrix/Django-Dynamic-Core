@@ -3382,6 +3382,7 @@ input[type="button"].btn-block {
   pointer-events: none;
 }
 
+.form-select,
 .form-select:disabled {
   background-color: var(--body-bg-alt);
   color: var(--text-color);
@@ -4569,6 +4570,7 @@ input[type="button"].btn-block {
 
 .card-title {
   margin-bottom: 0.75rem;
+  color: var(--card-title-color);
 }
 
 .card-subtitle {
@@ -9856,7 +9858,7 @@ a:focus {
 }
 
 #wrapper #content-wrapper {
-  background-color: var(--body-bg);
+  background-color: var(--body-bg-alt);
   width: 100%;
   overflow-x: hidden;
 }
