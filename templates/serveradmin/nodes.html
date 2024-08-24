@@ -1,0 +1,142 @@
+{% extends "serveradmin/base.html" %}
+{% block page_content %}
+<!-- Page Heading -->
+<div class="row d-sm-flex align-items-center justify-content-between">
+	<div class="col-md-6">
+		<h1 class="h3 mb-0 text-dark"><i class="fas fa-city"></i> Nodes</h1>
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				{% url 'admin-dashboard-home' as url %}
+				<li class="breadcrumb-item"><a href="{{ url }}">Admin Dashboard</a></li>
+				<li class="breadcrumb-item active" aria-current="page">Nodes</li>
+			</ol>
+		</nav>
+	</div>
+	<div class="col-md-6">
+		<a href="{% url 'admin-nodes-create' %}" class="float-end d-none d-sm-inline-block btn btn-sm btn-custom-primary shadow-sm">Add Node <i class="fas fa-plus fa-sm text-white-50"></i></a>
+	</div>
+	<p class="p-1 mr-4 page-header">This allows you to manage individual bare metal or dedicated servers which run your goblin daemons.</p>
+</div>
+<table class="table table-striped {% if user.profile.dark_mode %}table-dark{% else %}table-light{% endif %} table-hover">
+	<thead class="thead-dark">
+		<tr>
+			<th scope="col"><i class="fas fa-heart-pulse d-block text-center align-text-top pb-1"></i></th>
+			<th scope="col">Name</th>
+			<th scope="col">Location</th>
+			<th scope="col">Memory</th>
+			<th scope="col">Disk Space</th>
+			<th scope="col">Servers</th>
+			<th scope="col">SSL</th>
+			<th scope="col">Proxy</th>
+			<th scope="col">Public</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for node in nodes %}
+			<tr id="node-{{ node.id }}">
+				<td class="text-center">
+					<i class="fas fa-spinner fa-pulse status-icon text-secondary" id="status-icon-{{ node.id }}" data-toggle="tooltip" data-placement="top"></i>
+				</td>
+				<td><a href="{% url 'admin-node-detail' id=node.id %}">{{ node.name }}</a></td>
+				<td><a href="{% url 'admin-location-detail' id=node.location.id %}">{{ node.location.short_code }}</a></td>
+				<td><span class="badge badge-secondary">{{ node.memory }} MB</span></td>
+				<td><span class="badge badge-secondary">{{ node.disk }} MB</span></td>
+				<td class="text-center"><span class="badge badge-secondary">{{ node.servers.count }}</span></td>
+				<td class="text-center">
+					{% if node.ssl %}
+						<i class="fas fa-lock text-success"></i>
+					{% else %}
+						<i class="fas fa-lock-open text-danger"></i>
+					{% endif %}
+				</td>
+				<td class="text-center">
+					{% if node.proxy %}
+						<i class="fas fa-globe text-success"></i>
+					{% else %}
+						<i class="fas fa-globe text-danger"></i>
+					{% endif %}
+				</td>
+				<td class="text-center">
+					{% if node.public %}
+						<i class="fas fa-eye text-success"></i>
+					{% else %}
+						<i class="fas fa-eye-slash text-danger"></i>
+					{% endif %}
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}
+
+{% block footer_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const nodes = [
+        {% for node in nodes %}
+        {
+            id: "{{ node.id }}",
+            fqdn: "{{ node.fqdn }}",
+            ssl: "{{ node.ssl }}" === 'True',  // Convert string to boolean
+            daemon_token: "{{ node.daemon_token }}"  // Add daemon_token
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    nodes.forEach(node => {
+        const statusIcon = document.querySelector(`#node-${node.id} .status-icon`);
+
+        // Determine the protocol based on the SSL setting
+        const protocol = node.ssl ? 'https' : 'http';
+
+        fetch(`${protocol}://${node.fqdn}/docker`, { 
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${node.daemon_token}`  // Add Authorization header
+            }
+        })
+        .then(response => {
+            console.log('Response from node:', node.fqdn, response);
+            
+            // Log the response status and the JSON content
+            response.json()
+                .then(data => {
+                    console.log('Response JSON from node:', node.fqdn, data);
+                    
+                    if (data.INSTALLED) {
+                        statusIcon.classList.add('text-success');
+                        statusIcon.classList.remove('text-warning', 'text-danger');
+                        statusIcon.setAttribute('data-original-title', 'Status: Online');
+                    } else {
+                        statusIcon.classList.add('text-warning');
+                        statusIcon.classList.remove('text-success', 'text-danger');
+                        if (response.status === 401) {
+                            statusIcon.setAttribute('data-original-title', 'Status: Misconfigured (Invalid API Key)');
+                        } else {
+                            statusIcon.setAttribute('data-original-title', 'Status: Misconfigured (Docker is not installed.)');
+                        }
+                    }
+                    
+                    // Update the status content
+                    document.querySelector(`#node-${node.id} .status-content`).textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(err => {
+                    console.error('Error parsing JSON from node:', node.fqdn, err);
+                    document.querySelector(`#node-${node.id} .status-content`).textContent = 'Error parsing JSON';
+                });
+
+            statusIcon.classList.remove('text-secondary', 'fa-spinner', 'fa-pulse');
+            statusIcon.classList.add('fa-heart-pulse');
+        })
+        .catch(error => {
+            statusIcon.classList.remove('text-secondary', 'fa-spinner', 'fa-pulse');
+            statusIcon.classList.add('fa-heart-pulse', 'text-danger');
+            statusIcon.setAttribute('data-original-title', 'Status: Offline');
+            console.warn('Non-OK response from node:', node.fqdn, error);
+            console.error('Error connecting to node:', node.fqdn, error);
+        });
+    });
+});
+</script>
+
+{% endblock %}

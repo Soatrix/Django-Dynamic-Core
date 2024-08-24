@@ -1,0 +1,122 @@
+{% extends "serveradmin/base.html" %}
+{% block page_content %}
+<!-- Page Heading -->
+{% include "serveradmin/node-detail-header.html" %}
+<form method="post" action="">
+	{% csrf_token %}
+	<div class="row p-2">
+		<div class="col-md-6">
+			<div class="form-group">
+				<input class="form-control" id="serverName" name="serverName" type="text" value="{{ node.name }}" placeholder="Node Name" />
+				<small class="form-text text-muted">Primary node identifier and must be unique from other node names.</small>
+			</div>
+			<div class="form-group">
+				<select class="form-control" id="serverLocation" name="serverLocation" type="text" placeholder="Server Location">
+					{% for location in locations %}
+						<option value="{{ location.id }}" {% if node.location == location %}selected="selected"{% endif %}>{{ location }}</option>
+					{% endfor %}
+				</select>
+				<small id="passwordHelpBlock" class="form-text text-muted">The geographical location of this server in the world.</small>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text">FQDN: </div>
+					</div>
+					<input class="form-control" id="serverAddress" name="serverAddress" type="text" value="{{ node.fqdn }}" placeholder="Daemon Domain/Address" />
+					<small class="form-text text-muted">The fully qualified domain name of the server or alternatively specify the direct public IP address.</small>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="font-weight-bold">Use SSL Connection</label>
+				<small class="form-text text-muted">Should we use HTTP or HTTPS when communicating with the daemon.</small>
+				<div class="custom-control custom-radio custom-control-inline">
+				  <input type="radio" id="serverSSLOn" name="serverSSL" value="True" class="custom-control-input" {% if node.ssl %}checked="checked"{% endif %}>
+				  <label class="custom-control-label" for="serverSSLOn">On</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+				  <input type="radio" id="serverSSLOff" name="serverSSL" value="False" class="custom-control-input" {% if not node.ssl %}checked="checked"{% endif %}>
+				  <label class="custom-control-label" for="serverSSLOff">Off</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="font-weight-bold">Behind Proxy</label>
+				<small class="form-text text-muted">Enable this if your application is run behind a proxy such as Cloudflare, TCP Shield or Playit.GG, this skips checking SSL certificates on the host node.</small>
+				<div class="custom-control custom-radio custom-control-inline">
+				  <input type="radio" id="serverProxyOn" name="serverProxy" value="True" class="custom-control-input" {% if node.proxy %}checked="checked"{% endif %}>
+				  <label class="custom-control-label" for="serverProxyOn">On</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+				  <input type="radio" id="serverProxyOff" name="serverProxy" value="False" class="custom-control-input" {% if not node.proxy %}checked="checked"{% endif %}>
+				  <label class="custom-control-label" for="serverProxyOff">Off</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input class="form-control" id="serverMaxUploadSize" name="serverMaxUploadSize" type="text" value="{{ node.max_upload_size }}" placeholder="Max Upload Size" />
+					<div class="input-group-append">
+						<div class="input-group-text">MB</div>
+					</div>
+					<small class="form-text text-muted">The total file size allowed for all files uploaded to servers on this node via the panel.</small>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="form-group">
+				<textarea class="form-control" id="serverDescription" name="serverDescription" type="text" placeholder="Server Description">{{ node.description }}</textarea>
+				<small class="form-text text-muted">The description for this node.</small>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input class="form-control" id="serverMemory" name="serverMemory" type="text" value="{{ node.memory }}" placeholder="Server Memory" />
+					<div class="input-group-append">
+						<div class="input-group-text">MB</div>
+					</div>
+					<small class="form-text text-muted">The total amount of memory available to hoardes. Please ensure you leave 1-2GB of available memory for your system to function.</small>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input class="form-control" id="serverMemoryOver" name="serverMemoryOver" type="text" value="{{ node.memory_overallocate }}" placeholder="Memory Over Allocation" />
+					<div class="input-group-append">
+						<div class="input-group-text">%</div>
+					</div>
+					<small class="form-text text-muted">Determine how much more percentage over the set amount of memory the daemon can use. Set to 0 to disable.</small>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input class="form-control" id="serverDiskSpace" name="serverDiskSpace" type="text" value="{{ node.disk }}" placeholder="Server Disk Space" />
+					<div class="input-group-append">
+						<div class="input-group-text">MB</div>
+					</div>
+					<small class="form-text text-muted">The total amount of storage/disk space available for the node to utilize.</small>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input class="form-control" id="serverDiskSpaceOver" name="serverDiskSpaceOver" type="text" value="{{ node.disk_overallocate }}" placeholder="Disk Over Allocation" />
+					<div class="input-group-append">
+						<div class="input-group-text">%</div>
+					</div>
+					<small class="form-text text-muted">Determine how much more percentage over the set amount of disk space the daemon can use. Set to 0 to disable.</small>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="font-weight-bold">Publicly Visible</label>
+				<small class="form-text text-muted">Whether or not this node is publicly visible and able to be used for auto deployment.</small>
+				<div class="custom-control custom-radio custom-control-inline">
+				  <input type="radio" id="serverVisibleOn" name="serverVisible" value="True" class="custom-control-input" {% if node.public %}checked="checked"{% endif %}>
+				  <label class="custom-control-label" for="serverVisibleOn">On</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+				  <input type="radio" id="serverVisibleOff" name="serverVisible" value="False" class="custom-control-input" {% if not node.ssl %}checked="checked"{% endif %}>
+				  <label class="custom-control-label" for="serverVisibleOff">Off</label>
+				</div>
+			</div>
+			<button class="btn btn-custom-primary float-end align-bottom align-text-bottom" type="submit">Update</button>
+			<br>
+		</div>
+	</div>
+</form>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "auth/base.html" %}
+
+{% block cover_image %}
+	{% load static %}
+	{% static 'img/logo.png' %}
+{% endblock %}
+
+{% block page_content %}
+	<h1 class="text-center text-light my-auto">
+		<b>I think you're lost?</b>Perhaps in a cave somewhere.
+	</h1>
+	{% if request.user.is_authenticated %}
+		<div class="p-5 text-center mx-auto">
+			{% if request.user.is_superuser %}
+				<a class="btn gradient-bg" href="{% url 'admin-dashboard-home' %}">Return to Admin Dashboard</a>
+			{% endif %}
+			<hr>
+			<a class="btn gradient-bg" href="#">Return to Panel Home</a>
+		</div>
+	{% endif %}
+{% endblock %}

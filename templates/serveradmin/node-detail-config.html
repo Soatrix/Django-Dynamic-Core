@@ -1,0 +1,11 @@
+{% extends "serveradmin/base.html" %}
+{% block page_content %}
+<!-- Page Heading -->
+{% include "serveradmin/node-detail-header.html" %}
+<textarea rows="10" class="form-control" disabled="disabled">
+debug=False
+api_key={{ node.daemon_token }}
+panel_url={% if node.ssl %}https://{% else %}http://{% endif %}{{ request.get_host }}
+data=/var/lib/goblin
+</textarea>
+{% endblock %}

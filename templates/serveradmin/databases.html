@@ -1,0 +1,44 @@
+{% extends "serveradmin/base.html" %}
+{% block page_content %}
+<!-- Page Heading -->
+<div class="row d-sm-flex align-items-center justify-content-between">
+	<div class="col-md-6">
+		<h1 class="h3 mb-0 text-dark"><i class="fas fa-database"></i> Databases</h1>
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				{% url 'admin-dashboard-home' as url %}
+				<li class="breadcrumb-item"><a href="{{ url }}">Admin Dashboard</a></li>
+				<li class="breadcrumb-item active" aria-current="page">Databases</li>
+			</ol>
+		</nav>
+	</div>
+	<div class="col-md-6">
+		<a href="#" class="float-end d-none d-sm-inline-block btn btn-sm btn-custom-primary shadow-sm">Add Database <i class="fas fa-plus fa-sm text-white-50"></i></a>
+	</div>
+	<p class="p-1 mr-4 page-header">This allows you to manage database hosts for user creation and associated nodes.</p>
+</div>
+<table class="table table-striped {% if user.profile.dark_mode %}table-dark{% else %}table-light{% endif %} table-hover table-sm">
+	<thead class="thead-dark">
+		<tr>
+			<th scope="col">Name</th>
+			<th scope="col">Host</th>
+			<th scope="col">Port</th>
+			<th scope="col">Username</th>
+			<th scope="col">Databases</th>
+			<th scope="col">Node</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for database in databases %}
+			<tr>
+				<td><code class="text-dark">{{ database.name }}</code></td>
+				<td><code class="badge bg-gray-400 text-danger">{{ database.host }}</code></td>
+				<td><code class="badge bg-gray-400 text-danger">{{ database.port }}</code></td>
+				<td><code class="badge bg-gray-400 text-danger">{{ database.username }}</code></td>
+				<td><code class="badge bg-gray-400 text-dark">0</code></td>
+				<td><code class="text-dark"><a href="{% url 'admin-node-detail' id=database.node.id %}">{{ database.node.name }}</a></code></td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

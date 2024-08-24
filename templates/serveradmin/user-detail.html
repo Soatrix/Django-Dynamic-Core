@@ -1,0 +1,168 @@
+{% extends "serveradmin/base.html" %}
+{% block page_content %}
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row d-sm-flex align-items-center justify-content-between mb-4">
+        <div class="col-md-5">
+            <h1 class="h3 mb-0 text-dark"><i class="fas fa-{% if adminUser.is_superuser %}user-secret{% else %}user{% endif %}"></i> {{ adminUser.username }}</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'admin-dashboard-home' %}">Admin Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'admin-users' %}">Users</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ adminUser.username }}</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="col-md-7">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="servers-tab" data-toggle="tab" href="#servers" role="tab" aria-controls="servers" aria-selected="false">Servers</a>
+              </li>
+            </ul>
+        </div>
+        {% if success %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>User Updated!</strong><br> This users information was successfully updated.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% elif error %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong><br>{{ error|safe }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+    </div>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active mb-3" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card text-dark mb-3">
+                        <div class="card-header">
+                            <h5 class="page-title text-white">User Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="email">Email Address <small class="text-danger">required</small></label>
+                                <input class="form-control" name="email" id="email" value="{{ adminUser.email }}" {% if user == adminUser %}disabled="disabled"{% endif %}/>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Username <small class="text-danger">required</small></label>
+                                <input class="form-control" name="username" id="username" value="{{ adminUser.username }}"{% if user == adminUser %}disabled="disabled"{% endif %}/>
+                            </div>
+                            <div class="form-group">
+                                <label for="first_name">First Name <small class="text-danger">required</small></label>
+                                <input class="form-control" name="first_name" id="first_name" value="{{ adminUser.first_name }}"{% if user == adminUser %}disabled="disabled"{% endif %}/>
+                            </div>
+                            <div class="form-group">
+                                <label for="last_name">Last Name <small class="text-danger">required</small></label>
+                                <input class="form-control" name="last_name" id="last_name" value="{{ adminUser.last_name }}"{% if user == adminUser %}disabled="disabled"{% endif %}/>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" name="update" class="btn btn-custom-primary float-right" {% if user == adminUser %}disabled="disabled"{% endif %}>Update User</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card text-dark mb-3">
+                        <div class="card-header">
+                            <h5 class="page-title text-white">Password <small class="text-gray-300">optional</small></h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input class="form-control" name="password" id="password" type="password" {% if user == adminUser %}disabled="disabled"{% endif %}/>
+                                <small>Leave blank to keep this user's password the same. User will not receive any notification if password is changed.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card text-dark mb-3">
+                        <div class="card-header">
+                            <h5 class="page-title text-white">Permissions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="password" name="password" {% if adminUser.is_superuser %}checked="checked"{% endif %} {% if user == adminUser %}disabled="disabled"{% endif %}>
+                                    <label class="form-check-label" for="password">Administrator Access</label>
+                                </div>
+                                <small>Enabling this setting gives a user full administrative access to the enire panel and all connected servers and nodes.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card text-dark mb-3">
+                        <div class="card-header">
+                            <h5 class="page-title text-white">Themes & Customization</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="theme">Current Theme:</label>
+                                <select class="form-select" name="theme" id="theme" {% if user == adminUser %}disabled="disabled"{% endif %}>
+                                    <option value="default" selected="selected">Default Theme</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="dark-mode" name="dark-mode" {% if user == adminUser %}disabled="disabled"{% endif %}>
+                                    <label class="form-check-label" for="password">Dark Mode Enabled</label>
+                                    <small>This enables the dark mode version of the theme to conserve power usage.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card text-dark mb-3">
+                        <div class="card-header bg-danger">
+                            <h5 class="page-title text-white">Delete User</h5>
+                        </div>
+                        <div class="card-body">
+                            <b>Requirements:</b>
+                            <ul>
+                                <li>There must be no servers associated with this account in order for the user to be deleted.</li>
+                                <li>If the user has administrative access it needs to be removed in order for the user to be deleted.</li>
+                                <li>The user must not be the same as the one you are currently logged in with i.e. you can't delete your own account.</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" name="delete" class="btn btn-danger float-right" {% if adminUser.servers.count > 0 or adminUser.is_superuser or adminUser == user %}disabled="disabled"{% endif %}>Delete User</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="servers" role="tabpanel" aria-labelledby="servers-tab">
+            <table class="table table-striped {% if user.profile.dark_mode %}table-dark{% else %}table-light{% endif %} table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Server Name</th>
+                        <th scope="col">UUID</th>
+                        <th scope="col">Node</th>
+                        <th scope="col"><i class="fas fa-heart-pulse d-block text-center align-text-top pb-1"></i></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for server in servers %}
+                        <tr>
+                            <td>{{ server.name }}</td>
+                            <td><span class="badge badge-info">{{ server.uuid }}</span></td>
+                            <td><a href="{% url 'admin-node-detail' id=server.node.id %}">{{ server.node.name }}</a></td>
+                            <td><span class="badge badge-info">{% if server.default_allocation.alias %}{{ server.default_allocation.alias }}{% else %}{{ server.default_allocation.address }}{% endif %}:{{ server.default_allocation.port }}</span></td>
+                            <td><span class="badge badge-danger">Offline</span></td>
+                            <td><span class="badge badge-secondary"><i class="fas fa-wrench fa-sm"></i></span></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+</div>
+</form>
+{% endblock %}
