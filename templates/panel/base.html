@@ -141,12 +141,12 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="{% url 'account-home' %}">
+                                <a class="dropdown-item" href="{{ ADMIN_URL }}">
                                     <i class="fas fa-user-shield fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Manage Account
                                 </a>
                                 {% if user.is_superuser %}
-                                <a class="dropdown-item" href="{% url 'admin-dashboard-home' %}">
+                                <a class="dropdown-item" href="{{ ADMIN_URL }}">
                                     <i class="fas fa-toolbox fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Admin Panel
                                 </a>
