@@ -135,5 +135,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = LOGOUT_REDIRECT_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 
+# Project Specific Settings
+NAME = "Dynamic Django"
+VERSION = "0.1-DEV"
+
 # Messages Settings
 INVALID_LOGIN_MESSAGE = "Invalid Login Credentials. Please check your input and try again."
