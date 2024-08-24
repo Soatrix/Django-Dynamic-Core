@@ -11,7 +11,7 @@
     <meta name="author" content="">
 	
 
-    <title>{{ page_title }} | {{ PROJECT_NAME }}</title>
+    <title>{{ PAGE_TITLE }} | {{ PROJECT_NAME }}</title>
 
 
 	{% load static %}
@@ -27,10 +27,10 @@
     <link href="{% static 'css/admin.css' %}" rel="stylesheet">
 
     <style>
-        {% if user.profile.dark_mode %}
-            {{ user.profile.theme.dark_css }}
+        {% if USER.profile.dark_mode %}
+            {{ THEME.dark_css }}
         {% else %}
-            {{ user.profile.theme.light_css }}
+            {{ THEME.light_css }}
         {% endif %}
     </style>
 	
