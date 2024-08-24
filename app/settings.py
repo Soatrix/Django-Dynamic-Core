@@ -139,6 +139,8 @@ LOGIN_REDIRECT_URL = '/'
 # Project Specific Settings
 NAME = "Dynamic Django"
 VERSION = "0.1-DEV"
+# 404 Settings
+handler404 = "panel.views.Dashboard404View"
 
 # Dynamic Menu Settings
 ADMIN_MENU = []
