@@ -54,7 +54,7 @@
                                 <td><span class="badge badge-{% if theme.light_css == "" %}danger{% else %}success{% endif %}"><i class="fas fa-{% if theme.light_css == "" %}xmark{% else %}check{% endif %}"></i></span></td>
                                 <td><span class="badge badge-{% if theme.dark_css == "" %}danger{% else %}success{% endif %}"><i class="fas fa-{% if theme.dark_css == "" %}xmark{% else %}check{% endif %}"></i></span></td>
                                 <td><span class="badge badge-{% if theme.default %}success{% else %}danger{% endif %}"><i class="fas fa-{% if theme.default %}check{% else %}xmark{% endif %}"></i></span></td>
-                                <td><a href="#" class="badge badge-info"><i class="fas fa-wrench"></i></a></td>
+                                <td><a href="{% url 'admin-theme-detail' id=theme.id %}" class="badge badge-info"><i class="fas fa-wrench"></i></a></td>
                             </tr>
                         {% endfor %}
                     </tbody>
