@@ -139,8 +139,9 @@ LOGIN_URL = LOGOUT_REDIRECT_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 
 # Project Specific Settings
-NAME = "Dynamic Django"
-VERSION = "0.1-DEV"
+PROJECT_NAME = "Dynamic Django"
+PROJECT_VERSION = "0.1-DEV"
+
 # 404 Settings
 handler404 = "panel.views.Dashboard404View"
 
