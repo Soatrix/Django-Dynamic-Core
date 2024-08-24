@@ -1,3 +1,42 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.urls import reverse
+from django.views.generic import TemplateView
+from .mixins import LoggedOutRequiredMixin
+from panel.models import Theme
+from django.conf import settings
 
 # Create your views here.
+class AuthLoginView(LoggedOutRequiredMixin, TemplateView):
+    template_name = "auth/login.html"
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect(settings.LOGIN_REDIRECT_URL)
+        else:
+            context["success"] = False
+            context["error"] = settings.INVALID_LOGIN_MESSAGE
+            return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["PROJECT_NAME"] = settings.NAME
+        context["PAGE_TITLE"] = 'Login'
+        context["THEME"] = Theme.objects.all().first()
+        return context
+
+class AuthRegisterView(LoggedOutRequiredMixin, TemplateView):
+    template_name = "auth/register.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["PROJECT_NAME"] = settings.NAME
+        context["PAGE_TITLE"] = 'Registration'
+        context["THEME"] = Theme.objects.all().first()
+        return context
