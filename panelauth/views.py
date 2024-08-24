@@ -1,6 +1,5 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login
-from django.urls import reverse
 from django.views.generic import TemplateView
 from .mixins import LoggedOutRequiredMixin
 from panel.models import Theme
