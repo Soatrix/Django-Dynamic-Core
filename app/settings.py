@@ -70,7 +70,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'panel.context.app.site_theme',
                 'panel.context.app.site_settings',
-                'panel.context.app.site_user'
+                'panel.context.app.site_user',
+                'panel.context.app.dynamic_menu',
             ],
         },
     },

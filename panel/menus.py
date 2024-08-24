@@ -1,0 +1,24 @@
+ADMIN_MENU = [
+    {
+        "name": "Panel Management",
+        "items": [
+            {
+                "icon": "palette",
+                "label": "Themes",
+                "link": "#"
+            }
+        ]
+    }
+]
+FRONT_MENU = [
+    {
+      "name": "Account",
+      "items": [
+          {
+              "icon": "user-shield",
+              "label": "Manage Account",
+              "link": "account-home"
+          }
+      ]
+    }
+]
