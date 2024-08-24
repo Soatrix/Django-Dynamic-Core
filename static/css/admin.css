@@ -9960,29 +9960,29 @@ a:focus {
 
 .bg-gradient-custom {
 	color: #fff;
-	background: linear-gradient(100deg, rgba(255,108,171,1) 0%, rgba(115,102,255,1) 60%);
-	border-color: linear-gradient(100deg, rgba(255,108,171,1) 0%, rgba(115,102,255,1) 60%);
+    background: var(--bg-gradient);
+    border-color: var(--bg-primary)
 }
 
 @media (min-width: 768px) {
   .bg-gradient-custom {
     color: #fff;
 	background: var(--bg-gradient);
-	border-color: var(--bg-gradient);
+	border-color: var(--bg-primary);
   }
 }
 
 .bg-gradient-custom-reverse {
 	color: #fff;
 	background: var(--bg-gradient-reverse);
-	border-color: var(--bg-gradient-reverse);
+	border-color: var(--bg-secondary);
 }
 
 @media (min-width: 768px) {
   .bg-gradient-custom-reverse {
     color: #fff;
 	background: var(--bg-gradient-reverse);
-	border-color: var(--bg-gradient-reverse);
+	border-color: var(--bg-secondary);
   }
 }
 
