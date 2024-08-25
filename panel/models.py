@@ -7,6 +7,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     theme = models.ForeignKey('Theme', on_delete=models.CASCADE)
     dark_mode = models.BooleanField(default=False)
+    date_of_birth = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return self.user.username
