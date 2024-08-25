@@ -18,3 +18,10 @@ def split_string(value, delimiter_and_index):
         return parts[index]
     except (ValueError, IndexError):
         return ''  # Return an empty string if there's an error or index is out of range
+
+@register.filter
+def has_permission(user, permission):
+    """
+    Check if the user has the specified permission.
+    """
+    return user.has_perm(f"{permission.content_type.app_label}.{permission.codename}")

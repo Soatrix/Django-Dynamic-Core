@@ -4,6 +4,7 @@ from panel.models import Theme
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
+from datetime import datetime
 
 # Create your views here.
 class AdminDashboardHome(LoginRequiredMixin, TemplateView):
@@ -104,9 +105,106 @@ class AdminUsersView(LoginRequiredMixin, TemplateView):
         context["USERS"] = User.objects.all()
         return context
 
+class AdminUserDetailView(LoginRequiredMixin, TemplateView):
+    template_name = "adminpanel/user-detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["CURRENTUSER"] = get_object_or_404(User, id=self.kwargs["id"])
+        context["PERMISSIONS"] = Permission.objects.all()
+        context["GROUPS"] = Group.objects.all()
+        context["PAGE_TITLE"] = "Edit User #" + str(self.kwargs["id"])
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+
+        if "delete" in request.POST:
+            context["CURRENTUSER"].delete()
+            return redirect("admin-users")
+
+        # User Information
+        requiredFields = ["username", "first_name", "last_name"]
+        fields = ["username", "first_name", "last_name"]
+        started = False
+        for field in fields:
+            if field not in request.POST:
+                if not started:
+                    started = True
+                    context["error"] = "<ul>"
+                context["error"] = context["error"] + f"<li>{field} is required."
+            elif field in request.POST and field in requiredFields and request.POST.get(field) == "":
+                if not started:
+                    context["error"] = "<ul>"
+                    started = True
+                context["error"] = context["error"] + f"<li>The field \"" + field.replace("-", " ").replace("_",                                                                                  " ").title() + "\" is required.</li>"
+        if started:
+            context["error"] = context["error"] + "</ul>"
+        saveRequired = False
+        if not "error" in context:
+            for field in fields:
+                setattr(context["CURRENTUSER"], field, request.POST.get(field))
+                saveRequired = True
+        if saveRequired:
+            context["CURRENTUSER"].save()
+        # User Profile
+        if not "error" in context:
+            requiredFields = ["date_of_birth"]
+            fields = ["dark_mode", "theme", "date_of_birth"]
+            started = False
+            for field in fields:
+                if field not in request.POST and field in requiredFields:
+                    if not started:
+                        started = True
+                        context["error"] = "<ul>"
+                    context["error"] = context["error"] + f"<li>{field} is required."
+                elif field in request.POST and field in requiredFields and request.POST.get(field) == "":
+                    if not started:
+                        context["error"] = "<ul>"
+                        started = True
+                    context["error"] = context["error"] + f"<li>The field \"" + field.replace("-", " ").replace("_",                                                                                 " ").title() + "\" is required.</li>"
+            if started:
+                context["error"] = context["error"] + "</ul>"
+            saveRequired = False
+            print(request.POST)
+            print(context)
+            if not "error" in context:
+                for field in fields:
+                    if not field in request.POST:
+                        print("Setting " + field + " to False")
+                        setattr(context["CURRENTUSER"].profile, field, False)
+                    elif field == "theme":
+                        print(field)
+                        theme = Theme.objects.get(pk=int(request.POST.get(field)))
+                        setattr(context["CURRENTUSER"].profile, field, theme)
+                    else:
+                        if request.POST.get(field) == "on":
+                            value = True
+                        else:
+                            value = request.POST.get(field)
+                        setattr(context["CURRENTUSER"].profile, field, value)
+                    saveRequired = True
+            if saveRequired:
+                context["CURRENTUSER"].profile.save()
+
+        if not "error" in context:
+            saveRequired = False
+            for permission in context["PERMISSIONS"]:
+                if "permission-" + str(permission.id) in request.POST:
+                    if not context["CURRENTUSER"].has_perm(permission):
+                        context["GROUP"].user_permissions.add(permission)
+                        saveRequired = True
+                else:
+                    if context["CURRENTUSER"].has_perm(permission):
+                        context["CURRENTUSER"].user_permissions.remove(permission)
+                        saveRequired = True
+            if saveRequired:
+                context["CURRENTUSER"].save()
+            context["success"] = True
+        return self.render_to_response(context)
+
 class AdminGroupsView(LoginRequiredMixin, TemplateView):
     template_name = "adminpanel/groups.html"
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["PAGE_TITLE"] = "Manage Groups"
@@ -125,8 +223,11 @@ class AdminGroupDetailView(LoginRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
+        if "delete" in request.POST:
+            context["GROUP"].delete()
+            return redirect("admin-groups")
+
         saveRequired = False
-        print(request.POST)
         for permission in context["PERMISSIONS"]:
             if "permission-" + str(permission.id) in request.POST:
                 if permission not in context["GROUP"].permissions.all():
@@ -140,3 +241,35 @@ class AdminGroupDetailView(LoginRequiredMixin, TemplateView):
             context["GROUP"].save()
             context["success"] = True
         return self.render_to_response(context)
+
+class AdminGroupCreateView(LoginRequiredMixin, TemplateView):
+    template_name = "adminpanel/group-create.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["PERMISSIONS"] = Permission.objects.all()
+        context["PAGE_TITLE"] = "Create Group"
+        return context
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+
+        saveRequired = False
+        if Group.objects.filter(name=request.POST.get("group-name")).count() > 0:
+            context["success"] = False
+            context["error"] = "A group with that name already exists. Please choose a different name."
+            return self.render_to_response(context)
+        else:
+            context["GROUP"] = Group.objects.create(name=request.POST.get("group-name"))
+        for permission in context["PERMISSIONS"]:
+            if "permission-" + str(permission.id) in request.POST:
+                if permission not in context["GROUP"].permissions.all():
+                    context["GROUP"].permissions.add(permission)
+                    saveRequired = True
+            else:
+                if permission in context["GROUP"].permissions.all():
+                    context["GROUP"].permissions.remove(permission)
+                    saveRequired = True
+        if saveRequired:
+            context["GROUP"].save()
+            context["success"] = True
+        return redirect("admin-group-detail", id=context["GROUP"].id)

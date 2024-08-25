@@ -13,7 +13,7 @@
             </nav>
         </div>
         <div class="col-md-4">
-            <a class="btn btn-custom-secondary ml-auto float-right" id="add-group-tab" href="#"><i class="fas fa-plus"></i> Create Group</a>
+            <a class="btn btn-custom-secondary ml-auto float-right" id="add-group-tab" href="{% url 'admin-group-create' %}"><i class="fas fa-plus"></i> Create Group</a>
         </div>
         {% if success %}
             <div class="alert alert-success alert-dismissible fade show" role="alert">

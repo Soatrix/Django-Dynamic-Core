@@ -5,12 +5,12 @@
     {% csrf_token %}
     <div class="row d-sm-flex align-items-center justify-content-between">
         <div class="col-md-12">
-            <h1 class="h3 mb-0 text-dark"><i class="fas fa-user-group"></i> Groups</h1>
+            <h1 class="h3 mb-0 text-dark"><i class="fas fa-user-group"></i> Create Group</h1>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{% url 'admin-dashboard-home' %}">Admin Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'admin-groups' %}">Groups</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ GROUP.name }}</li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Group</li>
                 </ol>
             </nav>
         </div>
@@ -37,12 +37,11 @@
         <div class="card-body">
             <div class="form-group">
                 <label for="group-name">Group Name</label>
-                <input class="form-control" id="group-name" name="group-name" placeholder="Group Name" value="{{ GROUP.name }}" />
+                <input class="form-control" id="group-name" name="group-name" placeholder="Group Name" />
             </div>
         </div>
         <div class="card-footer">
-            <button type="submit" class="btn btn-info float-right m-1">Update Group</button>
-            <button type="submit" name="delete" class="btn btn-danger float-right m-1">Delete Group</button>
+            <button type="submit" class="btn btn-info float-right">Create Group</button>
         </div>
     </div>
     <div class="card text-dark mb-3">
@@ -55,7 +54,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="permission-{{ permission.id }}" name="permission-{{ permission.id }}" {% if permission in GROUP.permissions.all %}checked="checked"{% endif %}>
+                                <input class="form-check-input" type="checkbox" id="permission-{{ permission.id }}" name="permission-{{ permission.id }}">
                                 <label class="form-check-label" for="permission-{{ permission.id }}">({{ permission.content_type|split_string:" | :0" }}) {{ permission.name }}</label>
                             </div>
                         </div>
@@ -64,8 +63,7 @@
             </div>
         </div>
         <div class="card-footer">
-            <button type="submit" class="btn btn-info float-right m-1">Update Group</button>
-            <button type="submit" name="delete" class="btn btn-danger float-right m-1">Delete Group</button>
+            <button type="submit" class="btn btn-info float-right">Create Group</button>
         </div>
     </div>
 </form>
