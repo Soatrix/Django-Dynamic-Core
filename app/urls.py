@@ -20,6 +20,7 @@ from django.apps import apps
 from importlib import import_module
 from django.conf import settings
 from django.contrib.sitemaps.views import sitemap
+from .sitemaps import StaticViewSitemap
 
 sitemaps = {
     'static': StaticViewSitemap
