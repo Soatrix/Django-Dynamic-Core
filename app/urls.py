@@ -19,8 +19,13 @@ from django.urls import path, include
 from django.apps import apps
 from importlib import import_module
 from django.conf import settings
+from django.contrib.sitemaps.views import sitemap
 
+sitemaps = {
+    'static': StaticViewSitemap
+}
 urlpatterns = [
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}),
     path('djadmin/', admin.site.urls),
 ]
 
